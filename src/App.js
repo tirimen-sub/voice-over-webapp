@@ -1,15 +1,25 @@
 // src/App.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchQuestions, sendVoiceResponse } from './api';
 import QuestionCircle from './QuestionCircle';
 import AudioRecorder from './AudioRecorder';
 
 const App = () => {
+  const [questions, setQuestions] = useState([]);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
 
-  const questions = [
-    { id: 1, text: 'What is your favorite color?', answered: false },
-    { id: 2, text: 'How are you today?', answered: true },
-  ];
+  useEffect(() => {
+    fetchQuestions().then(fetchedQuestions => setQuestions(fetchedQuestions));
+  }, []);
+
+  const handleSendResponce = (audioBlob) => {
+    if (selectedQuestion){
+      sendVoiceResponse(audioBlob).then(response => {
+        console.log('Response received:', response);
+
+      });
+    }
+  };
 
   return (
     <div>
@@ -25,7 +35,7 @@ const App = () => {
       {selectedQuestion && !selectedQuestion.answered && (
         <div style={{ marginTop: '20px', textAlign: 'center' }}>
           <h2>Question: {selectedQuestion.text}</h2>
-          <AudioRecorder />
+          <AudioRecorder onRecordFinish={handleSendResponce} />
         </div>
       )}
     </div>

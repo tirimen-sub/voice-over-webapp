@@ -1,7 +1,5 @@
 // src/api.js
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL ||
-  'https://voice-over-api-140d9b2c8155.herokuapp.com';
+const API_BASE_URL =  'https://voice-over-api-140d9b2c8155.herokuapp.com';
 
 /**
  * 質問一覧を取得

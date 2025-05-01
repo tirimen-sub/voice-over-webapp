@@ -1,5 +1,5 @@
 // src/api.js
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://voice-over-api-140d9b2c8155.herokuapp.com/';
+const API_BASE_URL = 'https://voice-over-api-140d9b2c8155.herokuapp.com';
 
 export function fetchQuestions() {
   return fetch(`${API_BASE_URL}/questions`)

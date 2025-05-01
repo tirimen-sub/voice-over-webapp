@@ -1,18 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { fetchQuestions, sendVoiceResponse } from './api';
+import {
+  fetchQuestions,
+  sendVoiceResponse,
+  fetchResponses
+} from './api';
 import QuestionCircle from './QuestionCircle';
 
 const App = () => {
-  const [questions, setQuestions]       = useState([]);
+  const [questions, setQuestions]     = useState([]);
   const [selectedQuestion, setSelected] = useState(null);
-  const [error, setError]               = useState(null);
-  const [isRecording, setIsRecording]   = useState(false);
-  const [audioBlob, setAudioBlob]       = useState(null);
+  const [mode, setMode]               = useState(null); // 'record' or 'play'
+  const [playUrls, setPlayUrls]       = useState([]);
+  const [error, setError]             = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob]     = useState(null);
 
   const mediaRecorderRef = useRef(null);
   const chunksRef        = useRef([]);
 
-  // 質問のフェッチ
   useEffect(() => {
     (async () => {
       const qs = await fetchQuestions();
@@ -20,34 +25,50 @@ const App = () => {
     })();
   }, []);
 
+  // 質問クリック時
+  const handleSelect = async (q) => {
+    setError(null);
+    setAudioBlob(null);
+    if (!q.answered) {
+      // 録音モード
+      setMode('record');
+      setSelected(q);
+    } else {
+      // 再生モード
+      setMode('play');
+      setSelected(q);
+      try {
+        const responses = await fetchResponses(q.id);
+        setPlayUrls(responses.map(r => r.audio_url));
+      } catch (e) {
+        setError('音声取得に失敗しました');
+      }
+    }
+  };
+
   // 録音開始
   const startRecording = async () => {
     setError(null);
-    setAudioBlob(null);
+    setPlayUrls([]);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mr = new MediaRecorder(stream);
       mediaRecorderRef.current = mr;
       chunksRef.current = [];
-
       mr.ondataavailable = e => {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
-
       mr.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/wav' });
         setAudioBlob(blob);
       };
-
       mr.start();
       setIsRecording(true);
-    } catch (e) {
-      console.error(e);
+    } catch {
       setError('マイクへのアクセスに失敗しました');
     }
   };
 
-  // 録音停止
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
@@ -55,14 +76,12 @@ const App = () => {
     }
   };
 
-  // サーバーへアップロード
   const uploadAudio = async () => {
     if (!selectedQuestion || !audioBlob) return;
     setError(null);
     try {
       const res = await sendVoiceResponse(selectedQuestion.id, audioBlob);
-      console.log('サーバー応答:', res);
-      // 質問を「回答済み」にマーク
+      // 質問を回答済みに更新
       setQuestions(qs =>
         qs.map(q =>
           q.id === selectedQuestion.id
@@ -70,55 +89,49 @@ const App = () => {
             : q
         )
       );
-      // UIをリセット
-      setSelected(null);
-      setAudioBlob(null);
-    } catch (e) {
+      setMode('play');
+      // アップロード直後、再生URLを画面に反映
+      setPlayUrls([res.data.audioUrl]);
+    } catch {
       setError('音声回答の送信に失敗しました');
     }
   };
 
-  if (error) {
-    return <div style={{ color: 'red', padding: 20 }}>Error: {error}</div>;
-  }
-
   return (
     <div style={{ padding: 20 }}>
       <h1>Voice Over</h1>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
 
       {/* 質問リスト */}
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {questions.map(q => (
-          <div key={q.id} onClick={() => { if (!q.answered) {
-            setSelected(q)
-          }
-        }}
-        >
+          <div key={q.id} onClick={() => handleSelect(q)}>
             <QuestionCircle text={q.text} answered={q.answered} />
           </div>
         ))}
       </div>
 
-      {/* 選択中の質問が未回答なら録音UIを表示 */}
-      {selectedQuestion && !selectedQuestion.answered && (
+      {/* 録音モード */}
+      {selectedQuestion && mode === 'record' && (
         <div style={{ marginTop: 30, textAlign: 'center' }}>
           <h2>質問: {selectedQuestion.text}</h2>
-
-          <button
-            onClick={isRecording ? stopRecording : startRecording}
-            style={{ padding: '8px 16px', marginRight: 10 }}
-          >
+          <button onClick={isRecording ? stopRecording : startRecording}>
             {isRecording ? '録音停止' : '録音開始'}
           </button>
+          {audioBlob && <button onClick={uploadAudio}>音声をアップロード</button>}
+        </div>
+      )}
 
-          {/* 録音終了後、音声データがあればアップロードボタンを表示 */}
-          {audioBlob && (
-            <button
-              onClick={uploadAudio}
-              style={{ padding: '8px 16px' }}
-            >
-              音声をアップロード
-            </button>
+      {/* 再生モード */}
+      {selectedQuestion && mode === 'play' && (
+        <div style={{ marginTop: 30, textAlign: 'center' }}>
+          <h2>回答済みの質問: {selectedQuestion.text}</h2>
+          {playUrls.length > 0 ? (
+            playUrls.map((url, i) => (
+              <audio key={i} controls src={url} style={{ display: 'block', margin: '10px auto' }} />
+            ))
+          ) : (
+            <p>音声が見つかりません</p>
           )}
         </div>
       )}

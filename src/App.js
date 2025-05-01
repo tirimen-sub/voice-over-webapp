@@ -46,6 +46,14 @@ const App = () => {
           <AudioRecorder onRecordFinish={handleSendResponse} />
         </div>
       )}
+      
+      <button onClick={startRecording} disabled={isRecording}>
+        {isRecording ? 'Recording...' : 'Start Recording'}
+      </button>
+      {audioBlob && (
+        <button onClick={uploadAudio}>Upload Audio</button>
+      )}
+
     </div>
   );
 };

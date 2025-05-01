@@ -89,14 +89,18 @@ const App = () => {
       {/* 質問リスト */}
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
         {questions.map(q => (
-          <div key={q.id} onClick={() => setSelected(q)}>
+          <div key={q.id} onClick={() => { if (!q.answered) {
+            setSelected(q)
+          }
+        }}
+        >
             <QuestionCircle text={q.text} answered={q.answered} />
           </div>
         ))}
       </div>
 
       {/* 選択中の質問が未回答なら録音UIを表示 */}
-      {selectedQuestion && (
+      {selectedQuestion && !selectedQuestion.answered && (
         <div style={{ marginTop: 30, textAlign: 'center' }}>
           <h2>質問: {selectedQuestion.text}</h2>
 

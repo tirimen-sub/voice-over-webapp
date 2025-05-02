@@ -8,8 +8,7 @@ import {
 } from './api';
 import QuestionCircle from './QuestionCircle';
 import './App.css';  // 下記CSSを追加してください
-import './bgVideo';
-import BgVideo from './bgVideo';
+import BgVideo from './bgVideo.js';
 
 const App = () => {
   // 追加ステート

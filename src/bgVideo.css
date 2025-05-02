@@ -6,5 +6,5 @@
     height: 100vh;
     object-fit: cover; /* 中心クロップで画面全体を覆う */
     z-index: -1;       /* 背景として最背面に */
-    pointer-events: none; /* 上のUI操作を妨げないように */
+    pointer-events: none; /* 上のUI操作を妨げないように*/
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import './BgVideo.css';
+import './bgVideo.css';
 
 
 const BgVideo = () => (

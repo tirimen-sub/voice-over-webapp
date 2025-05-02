@@ -194,7 +194,7 @@ function generateBubbleStyle(text) {
 
           {/* 質問一覧 */}
             <div className="bubble-container">
-              {questions.map((q) => {
+              {questions.map(q => {
                 <div
                   key={q.id}
                   className="bubble"

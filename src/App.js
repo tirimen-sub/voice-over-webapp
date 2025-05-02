@@ -158,8 +158,8 @@ const App = () => {
             {questions.map(q => (
               <div
                 key={q.id}
-                onClick={() => handleSelect(q)}
                 className="question-wrapper"
+                onClick={() => handleSelect(q)}
               >
                 <QuestionCircle text={q.text} answered={q.answered} />
               </div>

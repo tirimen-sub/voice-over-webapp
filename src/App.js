@@ -8,6 +8,8 @@ import {
 } from './api';
 import QuestionCircle from './QuestionCircle';
 import './App.css';  // 下記CSSを追加してください
+import './bgVideo';
+import BgVideo from './bgVideo';
 
 const App = () => {
   // 追加ステート
@@ -183,6 +185,7 @@ function generateBubbleStyle(text) {
       {/* タイトル画面 */}
       {!isStarted ? (
         <div className="title-screen">
+          <BgVideo />
           <h1>Voice Over</h1>
           <button className="start-button" onClick={handleStart}>
             スタート

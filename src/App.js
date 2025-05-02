@@ -195,7 +195,7 @@ function generateBubbleStyle(text) {
 
           {/* 質問一覧 */}
             <div className="bubble-container">
-              {questions.map(q => {
+              {questions.map(q => (
                 <div
                   key={q.id}
                   className="bubble"
@@ -206,7 +206,7 @@ function generateBubbleStyle(text) {
                       {q.text}
                     </div>
                  </div>
-                })}
+                ))}
              </div>
 
           {/* 回答済みが１つ以上あれば “ボトルを投げる” ボタン表示 */}

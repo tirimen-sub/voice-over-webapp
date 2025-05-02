@@ -3,7 +3,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   fetchQuestions,
   sendVoiceResponse,
-  fetchResponses
+  fetchResponses,
+  postQuestion
 } from './api';
 import QuestionCircle from './QuestionCircle';
 import './App.css';  // 下記CSSを追加してください
@@ -126,12 +127,7 @@ const App = () => {
   const handleSubmitNewQuestion = async () => {
     if (!newQuestionText.trim()) return;
     try {
-      const resp = await fetch('/questions', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ text: newQuestionText.trim() })
-      });
-      const newQ = await resp.json();
+      const newQ = await postQuestion(newQuestionText.trim());
       setQuestions([newQ, ...questions]);
       handleCloseThrow();
     } catch {

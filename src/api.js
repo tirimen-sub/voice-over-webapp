@@ -23,6 +23,13 @@ export async function sendVoiceResponse(questionId, audioBlob) {
   return await res.json();
 }
 
+export const postQuestion = text =>
+  fetch(`${API_BASE_URL}/questions`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ text })
+  }).then(res => res.json());
+
 /**
  * 回答済みの音声URLを取得
  * @param {number|string} questionId

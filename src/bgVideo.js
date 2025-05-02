@@ -1,6 +1,7 @@
 import React from 'react';
 import './BgVideo.css';
 
+
 const BgVideo = () => (
   <video
     className="bg-video"

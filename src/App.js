@@ -204,7 +204,7 @@ const App = () => {
                 {playUrls.length > 0 ? (
                   playUrls.map((url, i) => (
                     <audio
-                      key={i}
+                      key={`${url}-${i}`}
                       controls
                       src={url}
                       style={{ display: 'block', margin: '10px auto' }}

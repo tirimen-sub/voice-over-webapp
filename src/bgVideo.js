@@ -1,5 +1,5 @@
 import React from 'react';
-import './bgVideo.css';
+import './App.css';
 
 
 const BgVideo = () => (
@@ -11,7 +11,7 @@ const BgVideo = () => (
     loop
     preload="auto"
   >
-    <source src="/vodouga01.mp4" type="video/mp4" />
+    <source src="./vodouga01.mp4" type="video/mp4" />
   </video>
 );
 

@@ -75,7 +75,7 @@
 
 .bubble {
   position: absolute;
-  bottom: -150px;
+  bottom: 0px;
   border-radius: 50%;
   background: rgba(255,255,255,0.8);
   display: flex;

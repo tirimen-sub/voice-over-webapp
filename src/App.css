@@ -65,22 +65,23 @@
 }
 
 
-/* App.css */
 .bubble-container {
   position: relative;
   width: 100vw;
   height: 100vh;
-  overflow: hidden; /* はみ出した部分は隠す */
+  overflow: hidden;
   background: #e0f7fa;
 }
 
 .bubble {
   position: absolute;
-  bottom: -150px;                     /* 下から出現させたい場合 */
-  transform: translateX(-50%);
-  cursor: pointer;
-
-  /* これを random で上書き */
+  bottom: -150px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   animation-name: float;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
@@ -99,4 +100,12 @@
     transform: translateX(-50%) translateY(0) rotate(0deg);
     opacity: 0.6;
   }
+}
+
+.bubble-content {
+  padding: 4px;
+  color: #333;
+  text-align: center;
+  font-size: 12px;
+  word-break: break-word;
 }

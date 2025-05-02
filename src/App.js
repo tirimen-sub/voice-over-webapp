@@ -154,17 +154,32 @@ const App = () => {
           {error && <div className="error">{error}</div>}
 
           {/* 質問一覧 */}
-          <div className="question-list">
-            {questions.map(q => (
-              <div
-                key={q.id}
-                className="question-wrapper"
-                onClick={() => handleSelect(q)}
-              >
-                <QuestionCircle text={q.text} answered={q.answered} />
-              </div>
-            ))}
-          </div>
+          <div className="bubble-container">
+              {questions.map((q, i) => {
+                 // ランダムなサイズ・位置・浮遊速度
+                  const size = Math.random() * 60 + 40;           // 40px～100px
+                  const left = Math.random() * 100;               // 0%～100%
+                  const floatDuration = Math.random() * 5 + 5;    // 5s～10s
+                  const floatRange = Math.random() * 30 + 20;     // 20px～50px
+
+                  return (
+                    <div
+                    key={q.id}
+                    className="bubble"
+                    onClick={() => handleSelect(q)}
+                    style={{
+                      width: size + 'px',
+                      height: size + 'px',
+                      left: left + '%',
+                      animationDuration: floatDuration + 's',
+                      '--float-range': floatRange + 'px'
+                    }}
+                    >
+                   <QuestionCircle text={q.text} answered={q.answered} />
+                 </div>
+                );
+              })}
+            </div>
 
           {/* 回答済みが１つ以上あれば “ボトルを投げる” ボタン表示 */}
           {answeredCount > 0 && (

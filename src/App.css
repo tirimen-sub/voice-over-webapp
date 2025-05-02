@@ -63,3 +63,40 @@
   font-size: 1.1rem;
   cursor: pointer;
 }
+
+
+/* App.css */
+.bubble-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* はみ出した部分は隠す */
+  background: #e0f7fa;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -150px;                     /* 下から出現させたい場合 */
+  transform: translateX(-50%);
+  cursor: pointer;
+
+  /* これを random で上書き */
+  animation-name: float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(-50%) translateY(calc(-1 * var(--float-range))) rotate(10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+    opacity: 0.6;
+  }
+}

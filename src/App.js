@@ -61,6 +61,7 @@ function generateBubbleStyle(text) {
   useEffect(() => {
     (async () => {
       const qs = await fetchQuestions();
+      console.log("APIリスト:", qs);
       const styled = qs.map(q => ({
         ...q,
         _style: generateBubbleStyle(q.text)

@@ -27,10 +27,45 @@ const App = () => {
   const mediaRecorderRef = useRef(null);
   const chunksRef        = useRef([]);
 
+// App.js の上部にでも
+function generateBubbleStyle(text) {
+  const baseFontSize = 14;                        // フォントサイズ
+  const textLength   = text.length;
+  // 文字数に合わせた直径を算出（min=50px, max=200px）
+  const diameter = Math.min(
+    200,
+    Math.max(50, textLength * baseFontSize + 20)
+  );
+
+  // 漂流アニメ用乱数
+  const driftX   = Math.random() * 200 - 100;     // -100px～+100px
+  const driftY   = Math.random() * 200 - 100;     // -100px～+100px
+  const duration = Math.random() * 8 + 4;         // 4s～12s
+
+  // 初期位置は画面中央寄り(20%～80%)
+  const topPct  = 20 + Math.random() * 60;
+  const leftPct = 20 + Math.random() * 60;
+
+  return {
+    width:             `${diameter}px`,
+    height:            `${diameter}px`,
+    fontSize:          `${baseFontSize}px`,
+    top:               `${topPct}%`,
+    left:              `${leftPct}%`,
+    '--drift-x':       `${driftX}px`,
+    '--drift-y':       `${driftY}px`,
+    animationDuration: `${duration}s`,
+  };
+}
+
   useEffect(() => {
     (async () => {
       const qs = await fetchQuestions();
-      setQuestions(qs);
+      const styled = qs.map(q => ({
+        ...q,
+        _style: generateBubbleStyle(q.text)
+      }));
+      setQuestions(styled);
     })();
   }, []);
 
@@ -128,7 +163,11 @@ const App = () => {
     if (!newQuestionText.trim()) return;
     try {
       const newQ = await postQuestion(newQuestionText.trim());
-      setQuestions([newQ, ...questions]);
+      const styledNewQ = {
+        ...newQ,
+        _style: generateBubbleStyle(newQ.text)
+      }
+      setQuestions(prev => [styledNewQ, ...prev]);
       handleCloseThrow();
     } catch {
       setError('質問の投稿に失敗しました');
@@ -156,41 +195,16 @@ const App = () => {
           {/* 質問一覧 */}
             <div className="bubble-container">
               {questions.map((q) => {
-                const baseFontSize = 14;           // フォントサイズ14px
-                const textLength   = q.text.length;
-                // 文字数に合わせた直径を算出、min=50px, max=200px
-                const diameter = Math.min(
-                  200,
-                  Math.max(50, textLength * baseFontSize + 20)
-                );
-
-              // 漂流アニメーション用の乱数パラメータ
-                const driftX = Math.random() * 200 - 100;  // -100px～+100px
-                const driftY = Math.random() * 200 - 100;  // -100px～+100px
-                const duration = Math.random() * 8 + 4;    // 4s～12s
-
-                return (
-                  <div
-                     key={q.id}
-                     className="bubble"
-                     onClick={() => handleSelect(q)}
-                     style={{
-                      width:             `${diameter}px`,
-                      height:            `${diameter}px`,
-                      fontSize:          `${baseFontSize}px`,
-                     // 画面中央付近からスタート（上下左右 20% 範囲）
-                     top:               `${20 + Math.random() * 60}%`,
-                     left:              `${20 + Math.random() * 60}%`,
-                    '--drift-x':       `${driftX}px`,
-                    '--drift-y':       `${driftY}px`,
-                   animationDuration: `${duration}s`,
-                  }}
-                  >
-                     <div className="bubble-content">
-                        {q.text}
+                <div
+                  key={q.id}
+                  className="bubble"
+                  onClick={() => handleSelect(q)}
+                  style={q._style}
+                >
+                    <div className="bubble-content">
+                      {q.text}
                     </div>
                  </div>
-                  );
                 })}
              </div>
 

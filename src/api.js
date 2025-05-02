@@ -29,8 +29,9 @@ export const postQuestion = text =>
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ text })
   })
-  .then(res => res.json());
-  return json.data;
+  if (!res.ok) throw new Error(res.statusText);
+  const json = await res.json();
+  return json.data;  
 /**
  * 回答済みの音声URLを取得
  * @param {number|string} questionId

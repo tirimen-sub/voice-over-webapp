@@ -154,32 +154,45 @@ const App = () => {
           {error && <div className="error">{error}</div>}
 
           {/* 質問一覧 */}
-          <div className="bubble-container">
-              {questions.map((q, i) => {
-                 // ランダムなサイズ・位置・浮遊速度
-                  const size = Math.random() * 60 + 40;           // 40px～100px
-                  const left = Math.random() * 100;               // 0%～100%
-                  const floatDuration = Math.random() * 5 + 5;    // 5s～10s
-                  const floatRange = Math.random() * 30 + 20;     // 20px～50px
-
-                  return (
-                    <div
-                    key={q.id}
-                    className="bubble"
-                    onClick={() => handleSelect(q)}
-                    style={{
-                      width: size + 'px',
-                      height: size + 'px',
-                      left: left + '%',
-                      animationDuration: floatDuration + 's',
-                      '--float-range': floatRange + 'px'
-                    }}
-                    >
-                   <QuestionCircle text={q.text} answered={q.answered} />
-                 </div>
+            <div className="bubble-container">
+              {questions.map((q) => {
+                const baseFontSize = 14;           // フォントサイズ14px
+                const textLength   = q.text.length;
+                // 文字数に合わせた直径を算出、min=50px, max=200px
+                const diameter = Math.min(
+                  200,
+                  Math.max(50, textLength * baseFontSize + 20)
                 );
-              })}
-            </div>
+
+              // 漂流アニメーション用の乱数パラメータ
+                const driftX = Math.random() * 200 - 100;  // -100px～+100px
+                const driftY = Math.random() * 200 - 100;  // -100px～+100px
+                const duration = Math.random() * 8 + 4;    // 4s～12s
+
+                return (
+                  <div
+                     key={q.id}
+                     className="bubble"
+                     onClick={() => handleSelect(q)}
+                     style={{
+                      width:             `${diameter}px`,
+                      height:            `${diameter}px`,
+                      fontSize:          `${baseFontSize}px`,
+                     // 画面中央付近からスタート（上下左右 20% 範囲）
+                     top:               `${20 + Math.random() * 60}%`,
+                     left:              `${20 + Math.random() * 60}%`,
+                    '--drift-x':       `${driftX}px`,
+                    '--drift-y':       `${driftY}px`,
+                   animationDuration: `${duration}s`,
+                  }}
+                  >
+                     <div className="bubble-content">
+                        {q.text}
+                    </div>
+                 </div>
+                  );
+                })}
+             </div>
 
           {/* 回答済みが１つ以上あれば “ボトルを投げる” ボタン表示 */}
           {answeredCount > 0 && (

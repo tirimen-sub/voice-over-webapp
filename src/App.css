@@ -108,21 +108,17 @@ html, body, #root {
   animation-fill-mode: forwards;
 }
 
-/* 上端から画面下まで移動するアニメーション */
+/* 上から下へ top を変化させる */
 @keyframes floatDown {
-  0%   { transform: translateY(-150px) translateX(0); opacity: 0; }
+  0%   { top: -200px; opacity: 0; }
   10%  { opacity: 1; }
-  100% { transform: translateY(100vh) translateX(0); opacity: 1; }
+  100% { top: 100vh; }
 }
 
-/* 左右にゆらゆら揺れるアニメーション */
+/* 左右にゆらぐ sway は transform だけなのでそのまま */
 @keyframes sway {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(var(--sway-amplitude, 15px));
-  }
+  0%,100% { transform: translateX(0); }
+  50%     { transform: translateX(var(--sway-amplitude, 15px)); }
 }
 
 

@@ -99,7 +99,9 @@ html, body, #root {
   justify-content: center;
   padding: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 2;          
+  mix-blend-mode: normal; /* さらに差分合成モードを解除 */
 
   /* 漂うアニメーション */
   animation-name: drift;

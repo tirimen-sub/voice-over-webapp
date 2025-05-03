@@ -1,5 +1,5 @@
 // src/utils/bubble.js
-export function generateBubbleStyle(text) {
+export default function generateBubbleStyle(text) {
   const baseFontSize = 14;
   const length = text.length;
   const diameter = Math.min(200, 20 + length * 2);

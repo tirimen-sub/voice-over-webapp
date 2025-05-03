@@ -9,13 +9,15 @@ html, body, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: transparent;
+  z-index: 0;
 }
 .bubble-container {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;      /* はみ出しバブルも隠す */
-  background: #e0f7fa;   /* お好みの背景色 */
+  background: transparent;   /* お好みの背景色 */
 }
 
 
@@ -130,6 +132,17 @@ html, body, #root {
   width: 100vw;
   height: 100vh;
   object-fit: cover; /* 中心クロップで画面全体を覆う */
-  z-index: -1;       /* 背景として最背面に */
+  z-index: -2;       /* 背景として最背面に */
   pointer-events: none; /* 上のUI操作を妨げないように*/
+}
+
+.overlay-video {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  opacity: 0.5;           /* 半透明 */
+  mix-blend-mode: multiply;/* 乗算合成 */
+  z-index: -1;            /* ベース動画より前、UIより後ろ */
+  pointer-events: none;    /* ユーザー操作を邪魔しない */
 }

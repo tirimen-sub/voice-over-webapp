@@ -1,36 +1,27 @@
 // App.js
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   fetchQuestions,
-  sendVoiceResponse,
   fetchResponses,
   postQuestion
 } from './api';
-import QuestionCircle from './QuestionCircle';
-import './App.css';  // 下記CSSを追加してください
+import './App.css';
 import BgVideo from './bgVideo.js';
 import OverlayVideo from './OverlayVideo.js';
 import AudioRecorder from './AudioRecorder.js';
 
 const App = () => {
-  // 追加ステート
   const [isStarted, setIsStarted]       = useState(false);
-  const [isFading, setIsFading]         = useState(false);   // フェード中フラグ
+  const [isFading, setIsFading]         = useState(false);
   const [showThrowModal, setShowThrow]  = useState(false);
   const [newQuestionText, setNewText]   = useState('');
-  const [responses, setResponses] = useState([]);
-
-
-  // 既存ステート
+  
   const [questions, setQuestions]       = useState([]);
   const [selectedQuestion, setSelected] = useState(null);
   const [mode, setMode]                 = useState(null); // 'record' or 'play'
   const [playUrls, setPlayUrls]         = useState([]);
   const [error, setError]               = useState(null);
 
-
-  const mediaRecorderRef = useRef(null);
-  const chunksRef        = useRef([]);
 
 // App.js の上部にでも
 function generateBubbleStyle(text) {
@@ -87,7 +78,6 @@ function generateBubbleStyle(text) {
   // 質問クリック → モーダルオープン
   const handleSelect = async (q) => {
     setError(null);
-    setAudioBlob(null);
     setSelected(q);
     if (!q.answered) {
       setMode('record');
@@ -109,13 +99,6 @@ function generateBubbleStyle(text) {
     setPlayUrls([]);
   };
 
-    // モーダルは play モードにして、新しい URL をリストに追加
-     setMode('play');
-     try{
-      setPlayUrls(urls => [...urls, resp.audioUrl]);
-    } catch {
-      setError('音声回答の送信に失敗しました');
-    };
 
   // “ボトルを投げる”押下
   const handleThrowClick = () => {

@@ -1,7 +1,7 @@
 // src/components/AudioRecorder.jsx
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { uploadResponse } from './api';
+import { sendVoiceResponse } from './api';
 
 const AudioRecorder = ({ questionId, onUploaded, onCancel }) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -18,7 +18,7 @@ const AudioRecorder = ({ questionId, onUploaded, onCancel }) => {
       mediaRecorder.current.onstop = async () => {
         const blob = new Blob(chunks.current, { type: 'audio/webm' });
         chunks.current = [];
-        const response = await uploadResponse(questionId, blob);
+        const response = await sendVoiceResponse(questionId, blob);
         onUploaded(response);
       };
       mediaRecorder.current.start();

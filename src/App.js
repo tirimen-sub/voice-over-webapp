@@ -14,6 +14,7 @@ import OverlayVideo from './OverlayVideo.js';
 const App = () => {
   // 追加ステート
   const [isStarted, setIsStarted]       = useState(false);
+  const [isFading, setIsFading]         = useState(false);   // フェード中フラグ
   const [showThrowModal, setShowThrow]  = useState(false);
   const [newQuestionText, setNewText]   = useState('');
 
@@ -74,7 +75,11 @@ function generateBubbleStyle(text) {
 
   // タイトル画面のスタートボタン
   const handleStart = () => {
-    setIsStarted(true);
+    setIsFading(true)
+    setTimeout(() => {
+      setIsStarted(true)
+      setIsFading(false)
+    }, 500)
   };
 
   // 質問クリック → モーダルオープン
@@ -186,7 +191,7 @@ function generateBubbleStyle(text) {
       {/* タイトル画面 */}
       {isStarted && <OverlayVideo />}
       {!isStarted ? (
-        <div className="title-screen">
+        <div className={`title-screen ${isFading ? 'fade-out' : ''}` }>
           <h1>Voice Over</h1>
           <button className="start-button" onClick={handleStart}>
             スタート
@@ -198,7 +203,9 @@ function generateBubbleStyle(text) {
           {error && <div className="error">{error}</div>}
 
           {/* 質問一覧 */}
-            <div className="bubble-container">
+          {isStarted && (
+            <div classname={`main-screen ${isFading ? '' : 'fade-in'}`}>
+              <div className="bubble-container">
               {questions.map(q => (
                 <div
                   key={q.id}
@@ -212,6 +219,9 @@ function generateBubbleStyle(text) {
                  </div>
                 ))}
              </div>
+            </div>
+          )}
+            
 
           {/* 回答済みが１つ以上あれば “ボトルを投げる” ボタン表示 */}
           {answeredCount > 0 && (

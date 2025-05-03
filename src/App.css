@@ -146,3 +146,25 @@ html, body, #root {
   z-index: -1;            /* ベース動画より前、UIより後ろ */
   pointer-events: none;    /* ユーザー操作を邪魔しない */
 }
+
+/* App.css などに追加してください */
+
+.title-screen,
+.main-screen {
+  position: absolute;    /* 重ねておく */
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease;
+  /* pointer-events: none; を入れた画面は押せなくなるので要調整 */
+}
+
+/* 初期状態 */
+.title-screen { opacity: 1; z-index: 2; }
+.main-screen  { opacity: 0; z-index: 1; }
+
+/* スタート直後にタイトル画面をフェードアウト */
+.title-screen.fade-out { opacity: 0; }
+
+/* タイトルが消えた後にメイン画面をフェードイン */
+.main-screen.fade-in  { opacity: 1; }

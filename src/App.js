@@ -5,7 +5,7 @@ import {
   postQuestion,
   fetchResponses
 } from './api';
-import { generateBubbleStyle } from './bubble';
+import generateBubbleStyle from './bubble';
 import AudioRecorder from './AudioRecorder';
 import './App.css';
 

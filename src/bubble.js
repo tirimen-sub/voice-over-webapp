@@ -6,7 +6,7 @@ export default function generateBubbleStyle(text) {
     window.matchMedia('(max-width: 600px)').matches;
   
   const mobileScale = 0.6;
-  const diameter_n = isMobile
+  const Newdiameter = isMobile
     ? diameter = mobileScale
     : diameter;
 
@@ -23,8 +23,8 @@ export default function generateBubbleStyle(text) {
   const swayAmplitude  = 10 + Math.random() * 20;   // 10px～30px
 
   return {
-    width:              `${diameter_n}px`,
-    height:             `${diameter_n}px`,
+    width:              `${Newdiameter}px`,
+    height:             `${Newdiameter}px`,
     fontSize:           `${fontSize}px`,
     top:                `-200px`,                 // スタート位置は画面上外
     left:               `${leftPercent}%`,

@@ -152,6 +152,9 @@ html, body, #root {
 }
 
 /* App.css などに追加してください */
+/* 初期状態 */
+.title-screen { opacity: 1; z-index: 2; }
+.main-screen  { opacity: 0; z-index: 1; }
 
 .title-screen,
 .main-screen {
@@ -163,10 +166,6 @@ html, body, #root {
   isolation: isolate;
   /* pointer-events: none; を入れた画面は押せなくなるので要調整 */
 }
-
-/* 初期状態 */
-.title-screen { opacity: 1; z-index: 2; }
-.main-screen  { opacity: 0; z-index: 1; }
 
 /* スタート直後にタイトル画面をフェードアウト */
 .title-screen.fade-out { opacity: 0; }

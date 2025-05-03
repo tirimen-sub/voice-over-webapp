@@ -95,9 +95,20 @@ html, body, #root {
   position: absolute;
   border-radius: 50%;
   cursor: pointer;
+    /* ↓ ここから追加または上書き */
+  display: flex;                /* Flexbox を有効化 */
+  flex-direction: column;       /* 複数行を縦方向に並べられるように */
+  justify-content: center;      /* 垂直方向（縦）に中央寄せ */
+  align-items: center;          /* 水平方向（横）に中央寄せ */
+  text-align: center;           /* 改行テキストを中央揃え */
+  white-space: normal;          /* 折り返しを許可 */
 
+  /* 必要に応じて padding を調整 */
+  padding: 0.5em;               
+  box-sizing: border-box;       /* padding を含めてサイズ計算 */
   /* 水色～透明へのラジアルグラデ */
   background: radial-gradient(
+    
     circle at 30% 30%,
     rgba(255, 255, 255, 0.8) 20%,   /* 中心のハイライト */
     rgba(173, 216, 230, 0.4) 60%,   /* 薄い水色 */

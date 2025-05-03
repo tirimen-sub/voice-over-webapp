@@ -99,7 +99,7 @@ function App() {
         {questions.map(q => (
           <div
             key={q.id}
-            className= "bubble"
+            className={`bubble ${q.answered ? 'answered' : ''}`}
             style={q.style}
             onClick={() => onSelect(q)}
           >

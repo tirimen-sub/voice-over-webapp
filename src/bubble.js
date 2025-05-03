@@ -2,8 +2,10 @@
 export default function generateBubbleStyle(text) {
   const baseFontSize = 14;
   const length = text.length;
-  const diameter = Math.min(200, 20 + length * 2);
-  const fontSize = Math.max(10, Math.min(18, baseFontSize + length * 0.2));
+  const diameter = Math.min(
+    200,
+    Math.max(50, length * baseFontSize + 20)
+    );
 
   // ランダム位置・アニメーション時間など
   const top = 20 + Math.random() * 60;
@@ -13,7 +15,7 @@ export default function generateBubbleStyle(text) {
   return {
     width: `${diameter}px`,
     height: `${diameter}px`,
-    fontSize: `${fontSize}px`,
+    fontSize: `${baseFontSize}px`,
     top: `${top}%`,
     left: `${left}%`,
     animationDuration: `${duration}s`

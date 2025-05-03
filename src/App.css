@@ -141,7 +141,7 @@ html, body, #root {
   top: 0; left: 0;
   width: 100vw; height: 100vh;
   object-fit: cover;
-  opacity: 0.5;           /* 半透明 */
+  opacity: 0.8;           /* 半透明 */
   mix-blend-mode: multiply;/* 乗算合成 */
   z-index: -1;            /* ベース動画より前、UIより後ろ */
   pointer-events: none;    /* ユーザー操作を邪魔しない */

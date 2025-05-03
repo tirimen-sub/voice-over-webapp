@@ -8,9 +8,14 @@ import {
 import generateBubbleStyle from './bubble';
 import AudioRecorder from './AudioRecorder';
 import './App.css';
+import BgVideo from './bgVideo.js';
+import OverlayVideo from './OverlayVideo.js';
 
 function App() {
   // --- State ---
+  const [isStarted, setIsStarted]       = useState(false);
+  const [isFading, setIsFading]         = useState(false);   // フェード中フラグ
+  const [showThrowModal, setShowThrow]  = useState(false);
   const [questions, setQuestions] = useState([]);         // 質問一覧
   const [error, setError]         = useState(null);
   const [selectedQ, setSelectedQ] = useState(null);       // { id, text, answered? }
@@ -86,9 +91,9 @@ function App() {
   // --- 描画 ---
   return (
     <div className="App">
-      <h1>Voice Over Q&A</h1>
+      <BgVideo />
+      <OverlayVideo />
       {error && <div className="error">{error}</div>}
-
       {/* 質問バブル */}
       <div className="bubble-container">
         {questions.map(q => (

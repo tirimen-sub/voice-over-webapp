@@ -10,6 +10,7 @@ import QuestionCircle from './QuestionCircle';
 import './App.css';  // 下記CSSを追加してください
 import BgVideo from './bgVideo.js';
 import OverlayVideo from './OverlayVideo.js';
+import AudioRecorder from './AudioRecorder.js';
 
 const App = () => {
   // 追加ステート
@@ -26,8 +27,7 @@ const App = () => {
   const [mode, setMode]                 = useState(null); // 'record' or 'play'
   const [playUrls, setPlayUrls]         = useState([]);
   const [error, setError]               = useState(null);
-  const [isRecording, setIsRecording]   = useState(false);
-  const [audioBlob, setAudioBlob]       = useState(null);
+
 
   const mediaRecorderRef = useRef(null);
   const chunksRef        = useRef([]);
@@ -109,53 +109,13 @@ function generateBubbleStyle(text) {
     setPlayUrls([]);
   };
 
-  // 録音開始／停止
-  const startRecording = async () => {
-    setError(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mr = new MediaRecorder(stream);
-      mediaRecorderRef.current = mr;
-      chunksRef.current = [];
-      mr.ondataavailable = e => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-      mr.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/wav' });
-        setAudioBlob(blob);
-      };
-      mr.start();
-      setIsRecording(true);
-    } catch {
-      setError('マイクへのアクセスに失敗しました');
-    }
-  };
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
-
-  // 音声アップロード → 回答完了
-  const uploadAudio = async () => {
-    if (!selectedQuestion || !audioBlob) return;
-    setError(null);
-    try {
-     const resp = await sendVoiceResponse(selectedQuestion.id, audioBlob);
-     // 質問リストの answered を true に
-     setQuestions(qs =>
-     qs.map(q =>
-     q.id === selectedQuestion.id ? { ...q, answered: true } : q
-     )
-    );
     // モーダルは play モードにして、新しい URL をリストに追加
      setMode('play');
-     setPlayUrls(urls => [...urls, resp.audioUrl]);
+     try{
+      setPlayUrls(urls => [...urls, resp.audioUrl]);
     } catch {
       setError('音声回答の送信に失敗しました');
-    }
-  };
+    };
 
   // “ボトルを投げる”押下
   const handleThrowClick = () => {
@@ -244,15 +204,24 @@ function generateBubbleStyle(text) {
             </button>
             {mode === 'record' && (
               <>
-                <h2>質問: {selectedQuestion.text}</h2>
-                <button
-                  onClick={isRecording ? stopRecording : startRecording}
-                >
-                  {isRecording ? '録音停止' : '録音開始'}
-                </button>
-                {audioBlob && (
-                  <button onClick={uploadAudio}>音声をアップロード</button>
-                )}
+                 <AudioRecorder
+
+                questionId={selectedQuestion.id}
+                onUploaded={data => {
+                   // 返ってきた data = { id, question_id, audio_url, created_at }
+                  // 質問を answered=true に
+                    setQuestions(qs =>
+                      qs.map(q =>
+                      q.id === selectedQuestion.id
+                      ? { ...q, answered: true }
+                      : q
+                      )
+                    );
+                    // play モードへ切り替え、新しい URL を再生リストに追加
+                  setMode('play');
+                  setPlayUrls(urls => [...urls, data.audio_url || data.audioUrl]);
+                }}
+              />
               </>
             )}
             {mode === 'play' && (

@@ -41,7 +41,7 @@ function App() {
     if (q.answered) {
       try {
         const resList = await fetchResponses(q.id);
-        setResponses(resList.map(r => r.audio_url));
+        setResponses(resList.map(r => r.audioUrl));
         setMode('play');
       } catch (e) {
         console.error(e);
@@ -62,7 +62,7 @@ function App() {
       )
     );
     // プレイモードに切り替え
-    setResponses(old => [...old, data.audio_url]);
+    setResponses(old => [...old, data.audioUrl]);
     setMode('play');
   };
 

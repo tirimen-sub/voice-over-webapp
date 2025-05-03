@@ -1,261 +1,170 @@
-// App.js
+// src/App.jsx
 import React, { useEffect, useState } from 'react';
 import {
   fetchQuestions,
-  fetchResponses,
-  postQuestion
+  postQuestion,
+  fetchResponses
 } from './api';
+import { generateBubbleStyle } from './bubble';
+import AudioRecorder from './AudioRecorder';
 import './App.css';
-import BgVideo from './bgVideo.js';
-import OverlayVideo from './OverlayVideo.js';
-import AudioRecorder from './AudioRecorder.js';
 
-const App = () => {
-  const [isStarted, setIsStarted]       = useState(false);
-  const [isFading, setIsFading]         = useState(false);
-  const [showThrowModal, setShowThrow]  = useState(false);
-  const [newQuestionText, setNewText]   = useState('');
-  
-  const [questions, setQuestions]       = useState([]);
-  const [selectedQuestion, setSelected] = useState(null);
-  const [mode, setMode]                 = useState(null); // 'record' or 'play'
-  const [playUrls, setPlayUrls]         = useState([]);
-  const [error, setError]               = useState(null);
+function App() {
+  // --- State ---
+  const [questions, setQuestions] = useState([]);         // 質問一覧
+  const [error, setError]         = useState(null);
+  const [selectedQ, setSelectedQ] = useState(null);       // { id, text, answered? }
+  const [mode, setMode]           = useState(null);       // 'record' | 'play'
+  const [responses, setResponses] = useState([]);         // URL の配列
+  const [newText, setNewText]     = useState('');
+  const [showAdd, setShowAdd]     = useState(false);
 
-
-// App.js の上部にでも
-function generateBubbleStyle(text) {
-  const baseFontSize = 14;                        // フォントサイズ
-  const textLength   = text.length;
-  // 文字数に合わせた直径を算出（min=50px, max=200px）
-  const diameter = Math.min(
-    200,
-    Math.max(50, textLength * baseFontSize + 20)
-  );
-
-  // 漂流アニメ用乱数
-  const driftX   = Math.random() * 200 - 100;     // -100px～+100px
-  const driftY   = Math.random() * 200 - 100;     // -100px～+100px
-  const duration = Math.random() * 8 + 4;         // 4s～12s
-
-  // 初期位置は画面中央寄り(20%～80%)
-  const topPct  = 20 + Math.random() * 60;
-  const leftPct = 20 + Math.random() * 60;
-
-  return {
-    width:             `${diameter}px`,
-    height:            `${diameter}px`,
-    fontSize:          `${baseFontSize}px`,
-    top:               `${topPct}%`,
-    left:              `${leftPct}%`,
-    '--drift-x':       `${driftX}px`,
-    '--drift-y':       `${driftY}px`,
-    animationDuration: `${duration}s`,
-  };
-}
-
+  // --- 初期質問取得 ---
   useEffect(() => {
     (async () => {
-      const qs = await fetchQuestions();
-      console.log("APIリスト:", qs);
-      const styled = qs.map(q => ({
-        ...q,
-        _style: generateBubbleStyle(q.text)
-      }));
-      setQuestions(styled);
+      try {
+        const list = await fetchQuestions();
+        // スタイルを付与
+        setQuestions(list.map(q => ({ ...q, style: generateBubbleStyle(q.text) })));
+      } catch (e) {
+        console.error(e);
+        setError('質問の取得に失敗しました');
+      }
     })();
   }, []);
 
-  // タイトル画面のスタートボタン
-  const handleStart = () => {
-    setIsFading(true)
-    setTimeout(() => {
-      setIsStarted(true)
-      setIsFading(false)
-    }, 500)
-  };
-
-  // 質問クリック → モーダルオープン
-  const handleSelect = async (q) => {
+  // --- 質問クリック ---
+  const onSelect = async q => {
     setError(null);
-    setSelected(q);
-    if (!q.answered) {
-      setMode('record');
-    } else {
-      setMode('play');
+    setSelectedQ(q);
+    // 回答済みなら play へ
+    if (q.answered) {
       try {
-        const list = await fetchResponses(q.id);
-        setPlayUrls(list.map(r => r.audio_url));
-      } catch {
-        setError('音声取得に失敗しました');
+        const resList = await fetchResponses(q.id);
+        setResponses(resList.map(r => r.audio_url));
+        setMode('play');
+      } catch (e) {
+        console.error(e);
+        setError('回答の取得に失敗しました');
       }
+    } else {
+      // 未回答なら record モードへ
+      setMode('record');
     }
   };
 
-  // 質問モーダルを閉じる
-  const handleCloseQuestion = () => {
-    setSelected(null);
-    setMode(null);
-    setPlayUrls([]);
+  // --- 録音完了後のコールバック ---
+  const handleUploaded = data => {
+    // 回答済みにフラグ更新
+    setQuestions(prev =>
+      prev.map(q =>
+        q.id === selectedQ.id ? { ...q, answered: true } : q
+      )
+    );
+    // プレイモードに切り替え
+    setResponses(old => [...old, data.audio_url]);
+    setMode('play');
   };
 
-
-  // “ボトルを投げる”押下
-  const handleThrowClick = () => {
-    setShowThrow(true);
-  };
-  const handleCloseThrow = () => {
-    setShowThrow(false);
-    setNewText('');
-  };
-
-  // 新規質問POST
-  const handleSubmitNewQuestion = async () => {
-    if (!newQuestionText.trim()) return;
+  // --- 新規質問作成 ---
+  const submitNew = async () => {
+    if (!newText.trim()) return;
     try {
-      const newQ = await postQuestion(newQuestionText.trim());
-      const styledNewQ = {
-        ...newQ,
-        _style: generateBubbleStyle(newQ.text)
-      }
-      setQuestions(prev => [styledNewQ, ...prev]);
-      handleCloseThrow();
-    } catch {
+      const q = await postQuestion(newText.trim());
+      setQuestions(prev => [
+        { ...q, style: generateBubbleStyle(q.text) },
+        ...prev
+      ]);
+      setNewText('');
+      setShowAdd(false);
+    } catch (e) {
+      console.error(e);
       setError('質問の投稿に失敗しました');
     }
   };
 
-  // 回答済みの数
-  const answeredCount = questions.filter(q => q.answered).length;
-
+  // --- 描画 ---
   return (
     <div className="App">
-      <BgVideo />
-      {/* タイトル画面 */}
-      {isStarted && <OverlayVideo />}
-      {!isStarted ? (
-        <div className={`title-screen ${isFading ? 'fade-out' : ''}` }>
-          <h1>Voice Over</h1>
-          <button className="start-button" onClick={handleStart}>
-            スタート
-          </button>
-        </div>
-      ) : (
-        <>
-          <h1>Voice Over</h1>
-          {error && <div className="error">{error}</div>}
+      <h1>Voice Over Q&A</h1>
+      {error && <div className="error">{error}</div>}
 
-          {/* 質問一覧 */}
-          {isStarted && (
-            <div className={`main-screen ${!isFading ? 'fade-in' : ''}`}>
-              <div className="bubble-container">
-              {questions.map(q => (
-                <div
-                  key={q.id}
-                  className="bubble"
-                  onClick={() => handleSelect(q)}
-                  style={q._style}
-                >
-                    <div className="bubble-content">
-                      {q.text}
-                    </div>
-                 </div>
-                ))}
-             </div>
-            </div>
-          )}
-            
-
-          {/* 回答済みが１つ以上あれば “ボトルを投げる” ボタン表示 */}
-          {answeredCount > 0 && (
-            <button className="throw-button" onClick={handleThrowClick}>
-              ボトルを投げる
-            </button>
-          )}
-        </>
-      )}
-
-      {/* 質問モーダル */}
-      {selectedQuestion && (
-        <div className="modal-overlay" onClick={handleCloseQuestion}>
+      {/* 質問バブル */}
+      <div className="bubble-container">
+        {questions.map(q => (
           <div
-            className="modal-content"
-            onClick={e => e.stopPropagation()}
+            key={q.id}
+            className={`bubble ${q.answered ? 'answered' : ''}`}
+            style={q.style}
+            onClick={() => onSelect(q)}
           >
-            <button className="modal-close" onClick={handleCloseQuestion}>
-              ×
-            </button>
-            {mode === 'record' && (
-              <>
-                 <AudioRecorder
+            {q.text}
+          </div>
+        ))}
+      </div>
 
-                questionId={selectedQuestion.id}
-                onUploaded={data => {
-                   // 返ってきた data = { id, question_id, audio_url, created_at }
-                  // 質問を answered=true に
-                    setQuestions(qs =>
-                      qs.map(q =>
-                      q.id === selectedQuestion.id
-                      ? { ...q, answered: true }
-                      : q
-                      )
-                    );
-                    // play モードへ切り替え、新しい URL を再生リストに追加
-                  setMode('play');
-                  setPlayUrls(urls => [...urls, data.audio_url || data.audioUrl]);
-                }}
-              />
-              </>
-            )}
-            {mode === 'play' && (
-              <>
-                <h2>回答済みの質問: {selectedQuestion.text}</h2>
-                {playUrls.length > 0 ? (
-                  playUrls.map((url, i) => (
-                    <audio
-                      key={`${url}-${i}`}
-                      controls
-                      src={url}
-                      style={{ display: 'block', margin: '10px auto' }}
-                    />
-                  ))
-                ) : (
-                  <p>音声が見つかりません</p>
-                )}
-              </>
-            )}
+      {/* 新規作成ボタン */}
+      <button onClick={() => setShowAdd(true)}>＋ 質問を投げる</button>
+
+      {/* 質問追加モーダル */}
+      {showAdd && (
+        <div className="modal-overlay" onClick={() => setShowAdd(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowAdd(false)}>×</button>
+            <h2>新しい質問を投稿</h2>
+            <textarea
+              rows="3"
+              value={newText}
+              onChange={e => setNewText(e.target.value)}
+              placeholder="ここに質問を入力..."
+            />
+            <button disabled={!newText.trim()} onClick={submitNew}>送信</button>
           </div>
         </div>
       )}
 
-      {/* 投げるモーダル */}
-      {showThrowModal && (
-        <div className="modal-overlay" onClick={handleCloseThrow}>
-          <div
-            className="modal-content"
-            onClick={e => e.stopPropagation()}
-          >
-            <button className="modal-close" onClick={handleCloseThrow}>
-              ×
-            </button>
-            <h2>新しい問いを投げる</h2>
-            <textarea
-              rows="4"
-              value={newQuestionText}
-              onChange={e => setNewText(e.target.value)}
-              placeholder="ここに問いを入力..."
-            />
-            <button
-              disabled={!newQuestionText.trim()}
-              onClick={handleSubmitNewQuestion}
-            >
-              送信
-            </button>
+      {/* レコード・プレイ モーダル */}
+      {selectedQ && (
+        <div className="modal-overlay" onClick={() => setSelectedQ(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedQ(null)}>×</button>
+
+            <h2>{selectedQ.text}</h2>
+
+            {mode === 'record' && (
+              <AudioRecorder
+                questionId={selectedQ.id}
+                onUploaded={handleUploaded}
+                onCancel={() => setSelectedQ(null)}
+              />
+            )}
+
+            {mode === 'play' && (
+              <div className="play-list">
+                {responses.length > 0 ? (
+                  responses.map((url, i) => (
+                    <audio 
+                    key={i}
+                    controls
+                    src={url}
+                    crossOrigin='anonymous'
+                    onLoadedMetadata={e =>
+                      console.log(`audio[${i}] duration=`,e.currentTarget.duration)
+                    }
+                    style={{ display: 'block', margin: '1em 0' }} 
+                    />
+                  ))
+                ) : (
+                  <p>まだ回答がありません</p>
+                )}
+              </div>
+            )}
+
           </div>
         </div>
       )}
     </div>
   );
-};
+}
 
 export default App;

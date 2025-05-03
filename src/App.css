@@ -93,29 +93,42 @@ html, body, #root {
 
 .bubble {
   position: absolute;
-  transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: rgba(255,255,255,0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  mix-blend-mode: normal; /* さらに差分合成モードを解除 */
-  z-index: 2;
-  transform-origin: center;
-  animation-fill-mode: forwards;
-}
+  cursor: pointer;
 
-/* 上から下へ top を変化させる */
+  /* 水色～透明へのラジアルグラデ */
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.8) 20%,   /* 中心のハイライト */
+    rgba(173, 216, 230, 0.4) 60%,   /* 薄い水色 */
+    rgba(173, 216, 230, 0.2) 100%   /* 周辺の透明感 */
+  );
+
+  /* ぼんやり光る境界線 */
+  border: 1px solid rgba(255, 255, 255, 0.7);
+
+  /* 内側に光沢＆外側に控えめな影 */
+  box-shadow:
+    inset -4px -4px 8px rgba(255, 255, 255, 0.6),  /* 上部光沢 */
+     2px  4px 12px rgba(0,   0,   0,   0.1);      /* 下方の柔らかい影 */
+
+  /* テキストは読みやすいように色を少し濃く */
+  color: #004060;
+  text-align: center;
+  line-height: 1.2;
+  padding: 0.5em;
+  
+  /* アニメーション指定が inline style で入る想定 */
+  /* animation: floatDown ... , sway ... ; */
+}
+/* top プロパティを変化させて落下させる */
 @keyframes floatDown {
   0%   { top: -200px; opacity: 0; }
   10%  { opacity: 1; }
   100% { top: 100vh; }
 }
 
-/* 左右にゆらぐ sway は transform だけなのでそのまま */
+/* transform: translateX で左右にゆらゆら */
 @keyframes sway {
   0%,100% { transform: translateX(0); }
   50%     { transform: translateX(var(--sway-amplitude, 15px)); }
@@ -133,6 +146,19 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.bubble.answered {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(240, 255, 240, 0.8) 20%,
+    rgba(200, 240, 200, 0.4) 60%,
+    rgba(200, 240, 200, 0.2) 100%
+  );
+  border-color: rgba(240, 255, 240, 0.7);
+  box-shadow:
+    inset -4px -4px 8px rgba(255, 255, 255, 0.6),
+     2px  4px 12px rgba(0,   0,   0,   0.1);
 }
 
 .bg-video {

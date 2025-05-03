@@ -204,7 +204,7 @@ function generateBubbleStyle(text) {
 
           {/* 質問一覧 */}
           {isStarted && (
-            <div className={`main-screen ${!sFading ? '' : 'fade-in'}`}>
+            <div className={`main-screen ${!isFading ? '' : 'fade-in'}`}>
               <div className="bubble-container">
               {questions.map(q => (
                 <div

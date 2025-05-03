@@ -1,25 +1,25 @@
-// src/utils/bubble.js
 export default function generateBubbleStyle(text) {
   const baseFontSize   = 14;
   const diameter       = Math.min(200, Math.max(50, text.length * baseFontSize + 20));
-  const leftPercent    = 10 + Math.random() * 80;
-  const fallDuration   = 8 + Math.random() * 4;   // 8～12秒
-  const swayDuration   = 2 + Math.random() * 2;   // 2～4秒
-  const swayAmplitude  = 10 + Math.random() * 20; // 10～30px
+  // 横位置は 0～100% の間でランダム
+  const leftPercent    = Math.random() * 100;
+  // 落下にかける時間をランダムかつ長めに（例：15～30秒）
+  const fallDuration   = 15 + Math.random() * 15;   // 15秒～30秒
+  // 揺れの周期と振幅
+  const swayDuration   = 3 + Math.random() * 2;     // 3秒～5秒周期
+  const swayAmplitude  = 10 + Math.random() * 20;   // 10px～30px
 
   return {
     width:              `${diameter}px`,
     height:             `${diameter}px`,
     fontSize:           `${baseFontSize}px`,
-    top:                `-200px`,              // スタート位置
+    top:                `-200px`,                 // スタート位置は画面上外
     left:               `${leftPercent}%`,
+    // CSS変数で揺れ幅を渡す
     '--sway-amplitude': `${swayAmplitude}px`,
-    /* 
-      floatDown は top のアニメーション、
-      sway は transform のアニメーション
-    */
+    // アニメーションを inline で指定
     animation: `
-      floatDown ${fallDuration}s linear 0s 1 both,
+      floatDown ${fallDuration}s linear 0s infinite both,
       sway      ${swayDuration}s ease-in-out 0s infinite both
     `
   };

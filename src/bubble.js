@@ -1,6 +1,19 @@
 export default function generateBubbleStyle(text) {
   const baseFontSize   = 14;
   const diameter       = Math.min(200, Math.max(50, text.length * baseFontSize + 20));
+  const isMobile = 
+    typeof window !== 'undefined' &&
+    window.matchMedia(`(max-width: 600px)`).matches;
+  
+  const mobileScale = 0.6;
+  const diameter_n = isMobile
+    ? diameter = mobileScale
+    : baseFontSize;
+
+  const fontSize = isMobile
+    ? baseFontSize * isMobile
+    : baseFontSize;
+
   // 横位置は 0～100% の間でランダム
   const leftPercent    = Math.random() * 100;
   // 落下にかける時間をランダムかつ長めに（例：15～30秒）
@@ -10,9 +23,9 @@ export default function generateBubbleStyle(text) {
   const swayAmplitude  = 10 + Math.random() * 20;   // 10px～30px
 
   return {
-    width:              `${diameter}px`,
-    height:             `${diameter}px`,
-    fontSize:           `${baseFontSize}px`,
+    width:              `${diameter_n}px`,
+    height:             `${diameter_n}px`,
+    fontSize:           `${fontSize}px`,
     top:                `-200px`,                 // スタート位置は画面上外
     left:               `${leftPercent}%`,
     // CSS変数で揺れ幅を渡す

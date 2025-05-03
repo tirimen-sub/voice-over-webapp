@@ -230,3 +230,28 @@ html, body, #root {
 
 /* タイトルが消えた後にメイン画面をフェードイン */
 .main-screen.fade-in  { opacity: 1; }
+
+
+
+/* 画面中央少し下に固定するボタン */
+.new-question-btn {
+  position: fixed;                /* ビューポートに対して固定 */
+  left: 50%;                      /* 横は中央 */
+  bottom: 20%;                    /* 縦は画面下から20%上 */
+  transform: translateX(-50%);    /* 自身の幅の半分だけ左へ寄せて完全中央に */
+  z-index: 100;                   /* バブルや背景の上に */
+  
+  /* ボタンらしく見せる装飾 */
+  padding: 0.8em 1.6em;
+  font-size: 1.2rem;
+  color: #fff;
+  background-color: #2196f3;
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: background-color .2s;
+}
+.new-question-btn:hover {
+  background-color: #1976d2;
+}

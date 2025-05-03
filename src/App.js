@@ -109,7 +109,7 @@ function App() {
       </div>
 
       {/* 新規作成ボタン */}
-      <button onClick={() => setShowAdd(true)}>＋ 質問を投げる</button>
+      <button  className="new-question-btn" onClick={() => setShowAdd(true)}>＋ 質問を投げる</button>
 
       {/* 質問追加モーダル */}
       {showAdd && (

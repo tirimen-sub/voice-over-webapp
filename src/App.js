@@ -17,6 +17,8 @@ const App = () => {
   const [isFading, setIsFading]         = useState(false);   // フェード中フラグ
   const [showThrowModal, setShowThrow]  = useState(false);
   const [newQuestionText, setNewText]   = useState('');
+  const [responses, setResponses] = useState([]);
+
 
   // 既存ステート
   const [questions, setQuestions]       = useState([]);
@@ -92,8 +94,8 @@ function generateBubbleStyle(text) {
     } else {
       setMode('play');
       try {
-        const responses = await fetchResponses(q.id);
-        setPlayUrls(responses.map(r => r.audio_url));
+        const list = await fetchResponses(q.id);
+        setPlayUrls(list.map(r => r.audio_url));
       } catch {
         setError('音声取得に失敗しました');
       }
@@ -140,18 +142,16 @@ function generateBubbleStyle(text) {
     if (!selectedQuestion || !audioBlob) return;
     setError(null);
     try {
-      const res = await sendVoiceResponse(selectedQuestion.id, audioBlob);
-      // 質問リストを更新
-      setQuestions(qs =>
-        qs.map(q =>
-          q.id === selectedQuestion.id
-            ? { ...q, answered: true }
-            : q
-        )
-      );
-      // モーダルはそのまま開いて play モードに切り替え
-      setMode('play');
-      setPlayUrls([res.data.audioUrl]);
+     const resp = await sendVoiceResponse(selectedQuestion.id, audioBlob);
+     // 質問リストの answered を true に
+     setQuestions(qs =>
+     qs.map(q =>
+     q.id === selectedQuestion.id ? { ...q, answered: true } : q
+     )
+    );
+    // モーダルは play モードにして、新しい URL をリストに追加
+     setMode('play');
+     setPlayUrls(urls => [...urls, resp.audioUrl]);
     } catch {
       setError('音声回答の送信に失敗しました');
     }

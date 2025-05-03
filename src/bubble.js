@@ -3,12 +3,12 @@ export default function generateBubbleStyle(text) {
   const diameter       = Math.min(200, Math.max(50, text.length * baseFontSize + 20));
   const isMobile = 
     typeof window !== 'undefined' &&
-    window.matchMedia(`(max-width: 600px)`).matches;
+    window.matchMedia('(max-width: 600px)').matches;
   
   const mobileScale = 0.6;
   const diameter_n = isMobile
     ? diameter = mobileScale
-    : baseFontSize;
+    : diameter;
 
   const fontSize = isMobile
     ? baseFontSize * isMobile

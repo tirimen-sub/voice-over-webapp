@@ -92,32 +92,42 @@ html, body, #root {
 
 
 .bubble {
-  /* App.css */
-
-.bubble {
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  /* バブル全体の幅・高さは inline style で動的設定 */
+  border-radius: 50%;
+  cursor: pointer;
+    /* ↓ ここから追加または上書き */
+  display: flex;                /* Flexbox を有効化 */
+  flex-direction: column;       /* 複数行を縦方向に並べられるように */
+  justify-content: center;      /* 垂直方向（縦）に中央寄せ */
+  align-items: center;          /* 水平方向（横）に中央寄せ */
+  text-align: center;           /* 改行テキストを中央揃え */
+  white-space: normal;          /* 折り返しを許可 */
 
-  /* 背景をもう少し濃く＆不透明に */
+  /* 必要に応じて padding を調整 */
+  padding: 0.5em;               
+  box-sizing: border-box;       /* padding を含めてサイズ計算 */
+  /* 水色～透明へのラジアルグラデ */
   background: radial-gradient(
+    
     circle at 30% 30%,
-    rgba(255, 255, 255, 0.9) 20%,   /* 中心の明るい部分 */
-    rgba(173, 216, 230, 0.7) 60%,   /* 少し濃いめの水色 */
-    rgba(173, 216, 230, 0.5) 100%   /* 周辺の色味 */
+    rgba(255, 255, 255, 0.8) 20%,   /* 中心のハイライト */
+    rgba(173, 216, 230, 0.4) 60%,   /* 薄い水色 */
+    rgba(173, 216, 230, 0.2) 100%   /* 周辺の透明感 */
   );
 
   /* 輪郭を太めに、不透明度を上げる */
   border: 2px solid rgba(255, 255, 255, 0.9);
 
-  /* バブルにドロップシャドウを追加して浮いて見せる */
-  box-shadow:
-    inset -4px -4px 8px rgba(255, 255, 255, 0.6),
-     0px  4px 12px rgba(0,   0,   0,   0.2);
 
+  /* ぼんやり光る境界線 */
+  border: 1px solid rgba(255, 255, 255, 0.7);
+
+  /* 内側に光沢＆外側に控えめな影 */
+  box-shadow:
+    inset -4px -4px 8px rgba(255, 255, 255, 0.6),  /* 上部光沢 */
+     2px  4px 12px rgba(0,   0,   0,   0.1);      /* 下方の柔らかい影 */
+
+  /* テキストは読みやすいように色を少し濃く */
   /* テキスト周り */
   color: #03396c;               /* 濃いブルーで高コントラスト */
   font-weight: bold;            /* 太字に */
@@ -131,28 +141,9 @@ html, body, #root {
   padding: 0.5em;
   box-sizing: border-box;
 }
-
-/* 回答済みバブルを別カラーで目立たせたい場合 */
-.bubble.answered {
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgba(240, 255, 240, 0.9) 20%,
-    rgba(200, 240, 200, 0.7) 60%,
-    rgba(200, 240, 200, 0.5) 100%
-  );
-  border-color: rgba(240, 255, 240, 0.9);
-}
-
-/* テキストだけ少し縮小したい場合はメディアクエリで調整 */
-@media (max-width: 600px) {
-  .bubble {
-    font-size: 1em;
-  }
-}
   
   /* アニメーション指定が inline style で入る想定 */
   /* animation: floatDown ... , sway ... ; */
-}
 /* top プロパティを変化させて落下させる */
 @keyframes floatDown {
   0%   { top: -200px; opacity: 0; }
@@ -166,6 +157,11 @@ html, body, #root {
   50%     { transform: translateX(var(--sway-amplitude, 15px)); }
 }
 
+@media (max-width: 600px) {
+  .bubble {
+    font-size: 1em;
+  }
+}
 
 /* バブル内テキスト */
 .bubble-content {
@@ -180,17 +176,15 @@ html, body, #root {
   justify-content: center;
 }
 
+/* 回答済みバブルを別カラーで目立たせたい場合 */
 .bubble.answered {
   background: radial-gradient(
     circle at 30% 30%,
-    rgba(240, 255, 240, 0.8) 20%,
-    rgba(200, 240, 200, 0.4) 60%,
-    rgba(200, 240, 200, 0.2) 100%
+    rgba(240, 255, 240, 0.9) 20%,
+    rgba(200, 240, 200, 0.7) 60%,
+    rgba(200, 240, 200, 0.5) 100%
   );
-  border-color: rgba(240, 255, 240, 0.7);
-  box-shadow:
-    inset -4px -4px 8px rgba(255, 255, 255, 0.6),
-     2px  4px 12px rgba(0,   0,   0,   0.1);
+  border-color: rgba(240, 255, 240, 0.9);
 }
 
 .bg-video {

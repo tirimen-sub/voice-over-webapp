@@ -7,7 +7,7 @@ export default function generateBubbleStyle(text) {
   
   const mobileScale = 0.6;
   const Newdiameter = isMobile
-    ? diameter = mobileScale
+    ? diameter * mobileScale
     : diameter;
 
   const fontSize = isMobile

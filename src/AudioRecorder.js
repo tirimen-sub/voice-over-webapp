@@ -40,9 +40,9 @@ const AudioRecorder = ({ questionId, onUploaded, onCancel }) => {
     <div className="recorder">
       {error && <div className="error">{error}</div>}
       {!isRecording
-        ? <button onClick={start}>録音開始</button>
-        : <button onClick={stop}>録音停止＆アップロード</button>}
-      <button onClick={onCancel}>キャンセル</button>
+        ? <button onClick={start}>録音開始/Start Recording</button>
+        : <button onClick={stop}>録音停止&アップロード / stop recording & Upload</button>}
+      <button onClick={onCancel}>キャンセル/Cancel</button>
     </div>
   );
 };

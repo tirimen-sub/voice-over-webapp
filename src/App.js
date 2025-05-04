@@ -133,7 +133,7 @@ function App() {
           className="new-question-btn"
           onClick={() => setShowAdd(true)}
           >
-            ＋ 質問を投げる
+            ＋ 質問を投げる/Post question
           </button>
 
 
@@ -150,7 +150,7 @@ function App() {
               rows="3"
               value={newText}
               onChange={e => setNewText(e.target.value)}
-              placeholder="ここに質問を入力..."
+              placeholder="ここに質問を入力.../Input question here..."
             />
             <button disabled={!newText.trim()} onClick={submitNew}>送信</button>
           </div>

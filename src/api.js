@@ -63,15 +63,11 @@ export async function fetchResponses(questionId) {
  * サーバー側 /api/check-ip を叩いて
  * { allowed: true/false } を返すだけのシンプルな関数
  */
+// services/api.js に追加した関数
 export async function checkIpAllowed() {
-  const res = await fetch(`${API_BASE_URL}/api/check-ip`, {
-    method: 'GET',
-    // 必要なら credentials: 'include' など
-  });
-  // レスポンス JSON は { allowed: true } か { allowed: false }
-  const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json.error || res.statusText);
-  }
-  return json.allowed;
+  const res = await fetch(`${API_BASE_URL}/api/check-ip`);
+  const json = await res.json();  // { allowed, clientIp }
+  console.log('DEBUG check-ip response:', json);
+  if (!res.ok) throw new Error(json.error || res.statusText);
+  return json;  // 返り値を { allowed, clientIp } に変えておく
 }

@@ -28,19 +28,19 @@ function App() {
   const [checked, setChecked]     = useState(false) //判定済み降らず
 
   useEffect(() => {
-    (async () => {
-      try {
-        const ok = await checkIpAllowed();
-        setAllowed(ok);
-      } catch (err) {
-        console.error('IP チェックでエラー', err);
-        setAllowed(false);
-      } finally {
+    checkIpAllowed()
+      .then(({ allowed, clientIp }) => {
+        console.log('Your IP is', clientIp);
+        setAllowed(allowed);
+      })
+      .catch(err => {
+        console.error('IPチェックでエラーが発生しました', err);
+        setAllowed(false);    // エラー時は false にするなど
+      })
+      .finally(() => {
         setChecked(true);
-      }
-    })();
+      });
   }, []);
-
 
   // --- 初期質問取得 ---
   useEffect(() => {

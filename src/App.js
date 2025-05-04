@@ -133,7 +133,7 @@ function App() {
           className="new-question-btn"
           onClick={() => setShowAdd(true)}
           >
-            ＋ 質問を投げる/Post question
+            ＋ 質問を投げる/Post a Question
           </button>
 
 

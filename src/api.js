@@ -57,3 +57,21 @@ export async function fetchResponses(questionId) {
     createdAt: d.created_at
   }));
 }
+
+
+/**
+ * サーバー側 /api/check-ip を叩いて
+ * { allowed: true/false } を返すだけのシンプルな関数
+ */
+export async function checkIpAllowed() {
+  const res = await fetch(`${API_BASE_URL}/api/check-ip`, {
+    method: 'GET',
+    // 必要なら credentials: 'include' など
+  });
+  // レスポンス JSON は { allowed: true } か { allowed: false }
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(json.error || res.statusText);
+  }
+  return json.allowed;
+}

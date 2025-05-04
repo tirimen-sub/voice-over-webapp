@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import {
   fetchQuestions,
   postQuestion,
-  fetchResponses
+  fetchResponses,
+  checkIpAllowed,
 } from './api';
 import generateBubbleStyle from './bubble';
 import AudioRecorder from './AudioRecorder';
@@ -23,6 +24,23 @@ function App() {
   const [responses, setResponses] = useState([]);         // URL の配列
   const [newText, setNewText]     = useState('');
   const [showAdd, setShowAdd]     = useState(false);
+  const [allowed, setAllowed]     = useState(false)
+  const [checked, setChecked]     = useState(false) //判定済み降らず
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const ok = await checkIpAllowed();
+        setAllowed(ok);
+      } catch (err) {
+        console.error('IP チェックでエラー', err);
+        setAllowed(false);
+      } finally {
+        setChecked(true);
+      }
+    })();
+  }, []);
+
 
   // --- 初期質問取得 ---
   useEffect(() => {
@@ -88,6 +106,8 @@ function App() {
     }
   };
 
+  if (!checked) return <div>Loading…</div>;
+
   // --- 描画 ---
   return (
     <div className="App">
@@ -107,9 +127,18 @@ function App() {
           </div>
         ))}
       </div>
+      
+      {allowed && (
+        <button
+          className="new-question-btn"
+          onClick={() => setShowAdd(true)}
+          >
+            ＋ 質問を投げる
+          </button>
 
+
+      )}
       {/* 新規作成ボタン */}
-      <button  className="new-question-btn" onClick={() => setShowAdd(true)}>＋ 質問を投げる</button>
 
       {/* 質問追加モーダル */}
       {showAdd && (

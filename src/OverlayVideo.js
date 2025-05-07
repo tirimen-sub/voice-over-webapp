@@ -11,7 +11,7 @@ const OverlayVideo = () => (
   loop
   preload="auto"
   onLoadedMetadata={e => {
-    e.currentTarget.playbackRate = 0.5;
+    e.currentTarget.playbackRate = 0.4;
   }}
 >
   <source src={bg2} type="video/mp4" />

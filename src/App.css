@@ -3,6 +3,7 @@ html, body, #root {
   padding: 0;
   width: 100vw;
   height: 100vh;
+  font-family: "Zen Maru Gothic", serif;
   overflow: hidden;      /* ページスクロール禁止 */
 }
 .App {
@@ -110,8 +111,8 @@ html, body, #root {
   background: radial-gradient(
     
     circle at 30% 30%,
-    rgba(255, 255, 255, 0.8) 20%,   /* 中心のハイライト */
-    rgba(173, 216, 230, 0.4) 60%,   /* 薄い水色 */
+    rgba(255, 255, 255, 0.8) 40%,   /* 中心のハイライト */
+    rgba(173, 216, 230, 0.4) 70%,   /* 薄い水色 */
     rgba(173, 216, 230, 0.2) 100%   /* 周辺の透明感 */
   );
 
@@ -129,13 +130,13 @@ html, body, #root {
 
   /* テキストは読みやすいように色を少し濃く */
   /* テキスト周り */
-  color: #03396c;               /* 濃いブルーで高コントラスト */
+  color: #3e98b4;               /* 濃いブルーで高コントラスト */
   font-weight: bold;            /* 太字に */
   font-size: 1.1em;             /* ベースより少し大きめ */
   line-height: 1.2;             /* 行間を少し開ける */
   text-align: center;           /* 中央揃え */
   text-shadow:                  /* 背景との分離用シャドウ */
-    1px 1px 2px rgba(0,0,0,0.3);
+    1px 2px 5px rgba(255, 255, 255, 0.868);
 
   /* パディングと box-sizing はそのまま */
   padding: 0.5em;
@@ -209,6 +210,7 @@ html, body, #root {
   pointer-events: none;    /* ユーザー操作を邪魔しない */
 }
 
+
 /* App.css などに追加してください */
 /* 初期状態 */
 .title-screen { opacity: 1; z-index: 2; }
@@ -244,8 +246,9 @@ html, body, #root {
   /* ボタンらしく見せる装飾 */
   padding: 0.8em 1.6em;
   font-size: 1.2rem;
+  font-family: "Zen Maru Gothic", serif;
   color: #fff;
-  background-color: #2196f3;
+  background-color: #21a6f3;
   border: none;
   border-radius: 24px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);

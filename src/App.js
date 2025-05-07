@@ -138,7 +138,6 @@ function App() {
 
 
       )}
-      {/* 新規作成ボタン */}
 
       {/* 質問追加モーダル */}
       {showAdd && (
@@ -165,7 +164,7 @@ function App() {
 
             <h2>{selectedQ.text}</h2>
 
-            {mode === 'record' && (
+            {mode === 'record' && allowed && (
               <AudioRecorder
                 questionId={selectedQ.id}
                 onUploaded={handleUploaded}
